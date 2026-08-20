@@ -5,139 +5,57 @@
     <title>On Sport - Live Player</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- الرابط المباشر لنسخة PNG من لوجو قناة On Sport -->
-    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/ar/thumb/a/a2/ON_Sport_Logo.svg/512px-ON_Sport_Logo.svg.png" type="image/png">
-    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/ar/thumb/a/a2/ON_Sport_Logo.svg/512px-ON_Sport_Logo.svg.png">
+    <!-- الأيقونة مدمجة كودياً (SVG) لتظهر في أي مكان بدون الحاجة للإنترنت أو روابط خارجية -->
+    <link rel="icon" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60'%3E%3Cpath d='M0 0l70 30L0 60z' fill='%23cbf128'/%3E%3Ctext x='7' y='38' font-family='Arial' font-weight='bold' font-size='22' fill='%23000'%3EON%3C/text%3E%3Ctext x='75' y='40' font-family='Arial' font-weight='bold' font-style='italic' font-size='35' fill='%23fff' stroke='%23000' stroke-width='1.5'%3Esport%3C/text%3E%3C/svg%3E" type="image/svg+xml">
     
     <style>
-        /* إخفاء شريط التمرير السفلي تماماً وضبط الأبعاد */
         html, body { 
-            margin: 0; 
-            padding: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: #000; 
-            overflow: hidden; 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background: #000; overflow: hidden; 
         }
         #player { 
-            width: 100%; 
-            height: 100%; 
-            position: absolute; 
-            top: 0; 
-            right: 0;
-            bottom: 0;
-            left: 0;
+            width: 100%; height: 100%; position: absolute; 
+            top: 0; right: 0; bottom: 0; left: 0;
         }
 
-        /* --------------------------------------------------- */
-        /* التعديلات البصرية لأيقونات المشغل */
-        /* --------------------------------------------------- */
-        
-        /* إخفاء أيقونة الشاشة الكاملة القديمة الافتراضية */
         .jw-icon-fullscreen svg { display: none !important; }
-
-        /* أيقونة الشاشة الكاملة الجديدة */
         .jw-icon-fullscreen {
             background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNOCAzSDVhMiAyIDAgMCAwLTIgMnYzbTE4IDBWNWEyIDIgMCAwIDAtMi0yaC0zbTAgMThoM2EyIDIgMCAwIDAgMi0ydi0zTTMgMTZ2M2EyIDIgMCAwIDAgMiAyaDMiLz48L3N2Zz4=');
-            background-size: 55%;
-            background-position: center;
-            background-repeat: no-repeat;
+            background-size: 55%; background-position: center; background-repeat: no-repeat;
         }
-
-        /* أيقونة الخروج من الشاشة الكاملة */
         .jw-flag-fullscreen .jw-icon-fullscreen {
             background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNOCAzdjNhMiAyIDAgMCAxLTIgMkgzbTE4IDBoLTNhMiAyIDAgMCAxLTUtMlYzbTAgMThoM2EyIDIgMCAwIDEgMiAydjMiLz48L3N2Zz4=');
         }
+        .jw-icon-playlist, .jw-icon-next, .jw-related-btn { display: none !important; }
 
-        /* إخفاء أيقونة "فيديوهات أكثر" (Playlist) والتالي الخاصة بـ JW Player */
-        .jw-icon-playlist, .jw-icon-next, .jw-related-btn { 
-            display: none !important; 
-        }
-
-        /* --------------------------------------------------- */
-        /* تصميم القائمة العائمة (Overlay) للقنوات */
-        /* --------------------------------------------------- */
         .channel-menu {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid #444;
-            border-radius: 12px;
-            padding: 20px;
-            z-index: 99999;
-            flex-direction: column;
-            gap: 10px;
-            min-width: 260px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            display: none; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px); border: 1px solid #444; border-radius: 12px;
+            padding: 20px; z-index: 99999; flex-direction: column; gap: 10px;
+            min-width: 260px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         }
-        .channel-menu.active {
-            display: flex;
-            animation: popIn 0.2s ease-out;
-        }
+        .channel-menu.active { display: flex; animation: popIn 0.2s ease-out; }
         @keyframes popIn {
             0% { opacity: 0; transform: translate(-50%, -45%) scale(0.95); }
             100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
         .channel-menu-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #444;
-            padding-bottom: 12px;
-            margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #444; padding-bottom: 12px; margin-bottom: 10px;
         }
-        .channel-menu-header h3 {
-            margin: 0;
-            color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 16px;
-        }
-        .close-btn {
-            cursor: pointer;
-            color: #ff4d4d;
-            font-size: 26px;
-            line-height: 1;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-        .close-btn:hover {
-            color: #ff1a1a;
-            transform: scale(1.1);
-        }
+        .channel-menu-header h3 { margin: 0; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 16px; }
+        .close-btn { cursor: pointer; color: #ff4d4d; font-size: 26px; line-height: 1; font-weight: bold; transition: 0.2s; }
+        .close-btn:hover { color: #ff1a1a; transform: scale(1.1); }
         .channel-menu-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 12px 15px;
-            background: #2b2b2b;
-            border-radius: 8px;
-            cursor: pointer;
-            color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 15px;
-            font-weight: bold;
-            transition: all 0.2s ease;
-            border: 1px solid transparent;
+            display: flex; align-items: center; gap: 15px; padding: 12px 15px;
+            background: #2b2b2b; border-radius: 8px; cursor: pointer; color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 15px; font-weight: bold; transition: all 0.2s ease; border: 1px solid transparent;
         }
-        .channel-menu-item:hover {
-            background: #3a3a3a;
-        }
-        .channel-menu-item.active-item {
-            background: #1dcf60;
-            border-color: #1dcf60;
-            color: #000;
-        }
+        .channel-menu-item:hover { background: #3a3a3a; }
+        .channel-menu-item.active-item { background: #1dcf60; border-color: #1dcf60; color: #000; }
         .channel-menu-item img {
-            width: 30px;
-            height: 30px;
-            border-radius: 6px;
-            background: #fff;
-            padding: 2px;
-            object-fit: contain;
+            width: 40px; height: 25px; border-radius: 4px; background: transparent; padding: 2px; object-fit: contain;
         }
     </style>
     
@@ -182,13 +100,11 @@
                 toggleMenu();
                 return;
             }
-            
             const items = document.querySelectorAll('.channel-menu-item');
             items.forEach((el, i) => {
                 if(i === index) el.classList.add('active-item');
                 else el.classList.remove('active-item');
             });
-
             playerInstance.playlistItem(index);
             toggleMenu();
         }
@@ -196,36 +112,25 @@
         playerInstance.on('ready', function() {
             const listIcon = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNNCA2aDE2TTQgMTJoMTZNNCAxOGgxNiIvPjwvc3ZnPg==";
             
-            playerInstance.addButton(
-                listIcon,
-                "قائمة القنوات",
-                function() {
-                    toggleMenu();
-                },
-                "channels-button"
-            );
+            playerInstance.addButton(listIcon, "قائمة القنوات", function() { toggleMenu(); }, "channels-button");
 
             let isStretched = false;
             const diagonalCutArrow = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTQgMTBsNy03bS02IDBoNnY2bS0xMSA1bC03IDdtNiAwSDN2LTYiLz48L3N2Zz4=";
 
             playerInstance.addButton(
-                diagonalCutArrow, 
-                "توسيع/تضييق الصورة", 
+                diagonalCutArrow, "توسيع/تضييق الصورة", 
                 function() {
                     if (!isStretched) {
-                        playerInstance.setConfig({ stretching: "exactfit" }); 
-                        isStretched = true;
+                        playerInstance.setConfig({ stretching: "exactfit" }); isStretched = true;
                     } else {
-                        playerInstance.setConfig({ stretching: "uniform" });
-                        isStretched = false;
+                        playerInstance.setConfig({ stretching: "uniform" }); isStretched = false;
                     }
-                },
-                "stretch-button"
+                }, "stretch-button"
             );
 
             const playerContainer = playerInstance.getContainer();
-            // استخدام رابط PNG المباشر
-            const logoUrl = "https://upload.wikimedia.org/wikipedia/ar/thumb/a/a2/ON_Sport_Logo.svg/512px-ON_Sport_Logo.svg.png"; 
+            // اللوجو المدمج كودياً لضمان ظهوره دائماً
+            const logoUrl = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60'%3E%3Cpath d='M0 0l70 30L0 60z' fill='%23cbf128'/%3E%3Ctext x='7' y='38' font-family='Arial' font-weight='bold' font-size='22' fill='%23000'%3EON%3C/text%3E%3Ctext x='75' y='40' font-family='Arial' font-weight='bold' font-style='italic' font-size='35' fill='%23fff' stroke='%23000' stroke-width='1.5'%3Esport%3C/text%3E%3C/svg%3E"; 
             
             const menuHtml = `
                 <div id="customChannelMenu" class="channel-menu" dir="rtl">
