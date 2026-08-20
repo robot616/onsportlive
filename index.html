@@ -5,9 +5,9 @@
     <title>On Sport - Live Player</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- تم استخدام الرابط المباشر لصورة اللوجو من ويكيبيديا -->
-    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/ar/a/a2/ON_Sport_Logo.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/ar/a/a2/ON_Sport_Logo.svg">
+    <!-- الرابط المباشر لنسخة PNG من لوجو قناة On Sport -->
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/ar/thumb/a/a2/ON_Sport_Logo.svg/512px-ON_Sport_Logo.svg.png" type="image/png">
+    <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/ar/thumb/a/a2/ON_Sport_Logo.svg/512px-ON_Sport_Logo.svg.png">
     
     <style>
         /* إخفاء شريط التمرير السفلي تماماً وضبط الأبعاد */
@@ -46,7 +46,7 @@
 
         /* أيقونة الخروج من الشاشة الكاملة */
         .jw-flag-fullscreen .jw-icon-fullscreen {
-            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNOCAzdjNhMiAyIDAgMCAxLTIgMkgzbTE4IDBoLTNhMiAyIDAgMCAxLTUtMlYzbTAgMTh2LTNhMiAyIDAgMCAxIDItMmgzTTMgMTZoM2EyIDIgMCAwIDEgMiAydjMiLz48L3N2Zz4=');
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNOCAzdjNhMiAyIDAgMCAxLTIgMkgzbTE4IDBoLTNhMiAyIDAgMCAxLTUtMlYzbTAgMThoM2EyIDIgMCAwIDEgMiAydjMiLz48L3N2Zz4=');
         }
 
         /* إخفاء أيقونة "فيديوهات أكثر" (Playlist) والتالي الخاصة بـ JW Player */
@@ -172,7 +172,6 @@
             "stretching": "uniform"
         });
 
-        // دوال للتحكم في القائمة العائمة
         function toggleMenu() {
             const menu = document.getElementById('customChannelMenu');
             if(menu) menu.classList.toggle('active');
@@ -195,7 +194,6 @@
         }
 
         playerInstance.on('ready', function() {
-            // 1. زر فتح قائمة القنوات (أيقونة Menu)
             const listIcon = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNNCA2aDE2TTQgMTJoMTZNNCAxOGgxNiIvPjwvc3ZnPg==";
             
             playerInstance.addButton(
@@ -207,7 +205,6 @@
                 "channels-button"
             );
 
-            // 2. زر التوسيع الأصلي
             let isStretched = false;
             const diagonalCutArrow = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMTQgMTBsNy03bS02IDBoNnY2bS0xMSA1bC03IDdtNiAwSDN2LTYiLz48L3N2Zz4=";
 
@@ -226,9 +223,9 @@
                 "stretch-button"
             );
 
-            // 3. حقن كود القائمة العائمة داخل واجهة البلاير
             const playerContainer = playerInstance.getContainer();
-            const logoUrl = "https://upload.wikimedia.org/wikipedia/ar/a/a2/ON_Sport_Logo.svg";
+            // استخدام رابط PNG المباشر
+            const logoUrl = "https://upload.wikimedia.org/wikipedia/ar/thumb/a/a2/ON_Sport_Logo.svg/512px-ON_Sport_Logo.svg.png"; 
             
             const menuHtml = `
                 <div id="customChannelMenu" class="channel-menu" dir="rtl">
