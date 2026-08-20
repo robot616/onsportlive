@@ -5,7 +5,7 @@
     <title>On Sport - Live Player</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <!-- الأيقونة بصيغة مربعة 512x512 لضمان الأناقة على الديسكتوب والموبايل -->
+    <!-- أيقونة التاب والديسكتوب من جوجل بلاي (ثابتة ومستقرة) -->
     <link rel="icon" href="https://play-lh.googleusercontent.com/ScrEK-542jVYYYzxn8PMxJGkc61u33koK1FM9v0rdNcWEuQeP2GqaO-N-t5sffMvdQCuZa6J7Npbcwzw3kkLP_c=s512" type="image/png">
     <link rel="apple-touch-icon" href="https://play-lh.googleusercontent.com/ScrEK-542jVYYYzxn8PMxJGkc61u33koK1FM9v0rdNcWEuQeP2GqaO-N-t5sffMvdQCuZa6J7Npbcwzw3kkLP_c=s512">
     
@@ -56,9 +56,10 @@
         .channel-menu-item:hover { background: #3a3a3a; }
         .channel-menu-item.active-item { background: #1dcf60; border-color: #1dcf60; color: #000; }
         
+        /* تظبيط شكل أيقونة الـ SVG الداخلية */
         .channel-menu-item img {
-            width: 36px; height: 36px; border-radius: 8px; background: transparent; 
-            padding: 0; object-fit: contain; box-sizing: border-box;
+            width: 40px; height: 25px; border-radius: 4px; background: transparent; 
+            padding: 2px; object-fit: contain; box-sizing: border-box;
         }
     </style>
     
@@ -132,7 +133,9 @@
             );
 
             const playerContainer = playerInstance.getContainer();
-            const logoUrl = "https://play-lh.googleusercontent.com/ScrEK-542jVYYYzxn8PMxJGkc61u33koK1FM9v0rdNcWEuQeP2GqaO-N-t5sffMvdQCuZa6J7Npbcwzw3kkLP_c=s512"; 
+            
+            // اللوجو الفيكتور (SVG) الداخلي للقائمة
+            const logoUrl = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60'%3E%3Cpath d='M0 0l70 30L0 60z' fill='%23cbf128'/%3E%3Ctext x='7' y='38' font-family='Arial' font-weight='bold' font-size='22' fill='%23000'%3EON%3C/text%3E%3Ctext x='75' y='40' font-family='Arial' font-weight='bold' font-style='italic' font-size='35' fill='%23fff' stroke='%23000' stroke-width='1.5'%3Esport%3C/text%3E%3C/svg%3E"; 
             
             const menuHtml = `
                 <div id="customChannelMenu" class="channel-menu" dir="rtl">
