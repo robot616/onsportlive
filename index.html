@@ -2,11 +2,10 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>On Sport</title>
+    <title>On Sport & Kora Plus</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-title" content="On Sport">
     
-    <!-- الرابط الأصلي بتاعك اللي اشتغل بدون أي تعديل مني -->
     <link rel="icon" href="https://play-lh.googleusercontent.com/ScrEK-542jVYYYzxn8PMxJGkc61u33koK1FM9v0rdNcWEuQeP2GqaO-N-t5sffMvdQCuZa6J7Npbcwzw3kkLP_c=w240-h480-rw" type="image/png">
     <link rel="apple-touch-icon" href="https://play-lh.googleusercontent.com/ScrEK-542jVYYYzxn8PMxJGkc61u33koK1FM9v0rdNcWEuQeP2GqaO-N-t5sffMvdQCuZa6J7Npbcwzw3kkLP_c=w240-h480-rw">
     
@@ -57,7 +56,6 @@
         .channel-menu-item:hover { background: #3a3a3a; }
         .channel-menu-item.active-item { background: #1dcf60; border-color: #1dcf60; color: #000; }
         
-        /* تظبيط شكل أيقونة الـ SVG الداخلية */
         .channel-menu-item img {
             width: 40px; height: 25px; border-radius: 4px; background: transparent; 
             padding: 2px; object-fit: contain; box-sizing: border-box;
@@ -86,6 +84,11 @@
                 {
                     "title": "On Sport Plus",
                     "file": "https://fastly.live.brightcove.com/6384149663112/us-east-1/6416013238001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoieWN3Ymx1LmVncmVzcy5zenkzeHgiLCJhY2NvdW50X2lkIjoiNjQxNjAxMzIzODAwMSIsImVobiI6ImZhc3RseS5saXZlLmJyaWdodGNvdmUuY29tIiwiaXNzIjoiYmxpdmUtcGxheWJhY2stc291cmNlLWFwaSIsInN1YiI6InBhdGhtYXB0b2tlbiIsImF1ZCI6WyI2NDE2MDEzMjM4MDAxIl0sImp0aSI6IjYzODQxNDk2NjMxMTIifQ.0yJpNEV0ZSId11mURgeaOhXZvov07Uj-VI_0qt0LLSQ/chunklist.m3u8",
+                    "type": "hls"
+                },
+                {
+                    "title": "Kora Plus",
+                    "file": "https://fastly.live.brightcove.com/6386030131112/us-east-1/6416013238001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoieWN3Ymx1LmVncmVzcy5zenkzeHgiLCJhY2NvdW50X2lkIjoiNjQxNjAxMzIzODAwMSIsImVobiI6ImZhc3RseS5saXZlLmJyaWdodGNvdmUuY29tIiwiaXNzIjoiYmxpdmUtcGxheWJhY2stc291cmNlLWFwaSIsInN1YiI6InBhdGhtYXB0b2tlbiIsImF1ZCI6WyI2NDE2MDEzMjM4MDAxIl0sImp0aSI6IjYzODYwMzAxMzExMTIifQ.aZa3dfTqySgbsPGs64c0_JTfvR1mKUmvdlDJ1WTeDgo/chunklist.m3u8",
                     "type": "hls"
                 }
             ],
@@ -135,13 +138,12 @@
 
             const playerContainer = playerInstance.getContainer();
             
-            // اللوجو الفيكتور (SVG) الداخلي للقائمة
             const logoUrl = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60'%3E%3Cpath d='M0 0l70 30L0 60z' fill='%23cbf128'/%3E%3Ctext x='7' y='38' font-family='Arial' font-weight='bold' font-size='22' fill='%23000'%3EON%3C/text%3E%3Ctext x='75' y='40' font-family='Arial' font-weight='bold' font-style='italic' font-size='35' fill='%23fff' stroke='%23000' stroke-width='1.5'%3Esport%3C/text%3E%3C/svg%3E"; 
             
             const menuHtml = `
                 <div id="customChannelMenu" class="channel-menu" dir="rtl">
                     <div class="channel-menu-header">
-                        <h3>باقة On Sport</h3>
+                        <h3>باقة القنوات</h3>
                         <span class="close-btn" onclick="toggleMenu()">&times;</span>
                     </div>
                     <div class="channel-menu-item active-item" onclick="changeChannel(0)">
@@ -155,6 +157,10 @@
                     <div class="channel-menu-item" onclick="changeChannel(2)">
                         <img src="${logoUrl}" alt="Icon">
                         <span>On Sport Plus</span>
+                    </div>
+                    <div class="channel-menu-item" onclick="changeChannel(3)">
+                        <img src="${logoUrl}" alt="Icon">
+                        <span>Kora Plus</span>
                     </div>
                 </div>
             `;
