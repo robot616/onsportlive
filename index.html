@@ -19,6 +19,36 @@
             top: 0; right: 0; bottom: 0; left: 0;
         }
 
+        /* --------------------------------- */
+        /* زرار القائمة الثابت بره البلاير */
+        /* --------------------------------- */
+        .floating-menu-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 99998; /* تحت القائمة المفتوحة بدرجة واحدة */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .floating-menu-btn:hover {
+            background: rgba(40, 40, 40, 0.9);
+            border-color: #1dcf60;
+            transform: scale(1.05);
+        }
+        .floating-menu-btn svg {
+            width: 24px;
+            height: 24px;
+            stroke: #fff;
+        }
+
         .jw-icon-fullscreen svg { display: none !important; }
         .jw-icon-fullscreen {
             background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNOCAzSDVhMiAyIDAgMCAwLTIgMnYzbTE4IDBWNWEyIDIgMCAwIDAtMi0yaC0zbTAgMThoM2EyIDIgMCAwIDAgMi0ydi0zTTMgMTZ2M2EyIDIgMCAwIDAgMiAyaDMiLz48L3N2Zz4=');
@@ -67,6 +97,13 @@
 <body>
 
     <div id="player"></div>
+
+    <!-- الزرار العائم الثابت المستقل تماماً عن البلاير -->
+    <div class="floating-menu-btn" onclick="toggleMenu()" title="قائمة القنوات">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+    </div>
 
     <script>
         const playerInstance = jwplayer("player").setup({
@@ -122,9 +159,17 @@
             toggleMenu();
         }
 
+        // إظهار القائمة أوتوماتيك لو البث فاصل أو السيرفر واقع
+        playerInstance.on('error', function(e) {
+            const menu = document.getElementById('customChannelMenu');
+            if(menu && !menu.classList.contains('active')) {
+                menu.classList.add('active');
+            }
+        });
+
         playerInstance.on('ready', function() {
+            // زرار القائمة جوه البلاير (هيفضل موجود لو البث شغال)
             const listIcon = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNNCA2aDE2TTQgMTJoMTZNNCAxOGgxNiIvPjwvc3ZnPg==";
-            
             playerInstance.addButton(listIcon, "قائمة القنوات", function() { toggleMenu(); }, "channels-button");
 
             let isStretched = false;
@@ -141,8 +186,7 @@
                 }, "stretch-button"
             );
 
-            const playerContainer = playerInstance.getContainer();
-            
+            // حقن القائمة في جسم الصفحة (بره المشغل) عشان تفضل سليمة لو حصل إيرور
             const logoUrl = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60'%3E%3Cpath d='M0 0l70 30L0 60z' fill='%23cbf128'/%3E%3Ctext x='7' y='38' font-family='Arial' font-weight='bold' font-size='22' fill='%23000'%3EON%3C/text%3E%3Ctext x='75' y='40' font-family='Arial' font-weight='bold' font-style='italic' font-size='35' fill='%23fff' stroke='%23000' stroke-width='1.5'%3Esport%3C/text%3E%3C/svg%3E"; 
             
             const menuHtml = `
@@ -175,7 +219,7 @@
             `;
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = menuHtml;
-            playerContainer.appendChild(tempDiv.firstElementChild);
+            document.body.appendChild(tempDiv.firstElementChild);
         });
     </script>
 </body>
