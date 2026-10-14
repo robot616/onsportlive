@@ -5,10 +5,10 @@
     <title>On Sport & Kora Plus</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-title" content="On Sport">
-    
+
     <link rel="icon" href="https://play-lh.googleusercontent.com/ScrEK-542jVYYYzxn8PMxJGkc61u33koK1FM9v0rdNcWEuQeP2GqaO-N-t5sffMvdQCuZa6J7Npbcwzw3kkLP_c=w240-h480-rw" type="image/png">
     <link rel="apple-touch-icon" href="https://play-lh.googleusercontent.com/ScrEK-542jVYYYzxn8PMxJGkc61u33koK1FM9v0rdNcWEuQeP2GqaO-N-t5sffMvdQCuZa6J7Npbcwzw3kkLP_c=w240-h480-rw">
-    
+
     <style>
         html, body { 
             margin: 0; padding: 0; width: 100%; height: 100%; 
@@ -60,8 +60,37 @@
             width: 40px; height: 25px; border-radius: 4px; background: transparent; 
             padding: 2px; object-fit: contain; box-sizing: border-box;
         }
+
+        /* Quality menu */
+        .quality-menu {
+            display: none;
+            position: absolute;
+            bottom: 70px;
+            right: 20px;
+            background: rgba(20,20,20,0.96);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 8px;
+            z-index: 999999;
+            min-width: 160px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            direction: ltr;
+        }
+        .quality-menu.active { display: block; }
+        .quality-item {
+            padding: 8px 12px;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 6px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 4px 0;
+            background: transparent;
+        }
+        .quality-item:hover { background: #333; }
+        .quality-item.active-quality { background: #1dcf60; color: #000; border: 1px solid #1dcf60; }
+
     </style>
-    
+
     <script src="https://content.jwplatform.com/libraries/SAHhwvZq.js"></script>
 </head>
 <body>
@@ -69,43 +98,85 @@
     <div id="player"></div>
 
     <script>
+        // --- الجديدة: قنوات متعددة الجودات في بداية القائمة ---
+        const multiQualityChannels = [
+            {
+                title: "ON SPORTS HD (24/7)",
+                qualities: [
+                    { label: "1080P", url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F53.css%3Fx%3D%2Fhls%2F%26token%3DSUhQUk1VOUh1V2ZXTFV3" },
+                    { label: "720P",  url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F1415.css%3Fx%3D%2Fhls%2F%26token%3DQllabUZBYnAxemhLb05N" },
+                    { label: "480P",  url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F1412.css%3Fx%3D%2Fhls%2F%26token%3DQllabUZBYnAxemhLb05N" }
+                ]
+            },
+            {
+                title: "ON SPORTS MAX (24/7)",
+                qualities: [
+                    { label: "1080P", url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F56.css%3Fx%3D%2Fhls%2F%26token%3DSWdGOTFaZ3VVTTVPenZh" },
+                    { label: "720P",  url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F1439.css%3Fx%3D%2Fhls%2F%26token%3DNjE4dUd0YU84dXlNc3Y0" },
+                    { label: "480P",  url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F1436.css%3Fx%3D%2Fhls%2F%26token%3DMXV0a1FGc3RXeExQbGE1" }
+                ]
+            },
+            {
+                title: "ON SPORTS PLUS (24/7)",
+                qualities: [
+                    { label: "1080P", url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F638.css%3Fx%3D%2Fhls%2F%26token%3Dd1BGcG1IT204ZFZQT3c2" },
+                    { label: "720P",  url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F1445.css%3Fx%3D%2Fhls%2F%26token%3DQXdPaE5McnhuSkJxQkk5" },
+                    { label: "480P",  url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F1442.css%3Fx%3D%2Fhls%2F%26token%3DSVdPSEN5SFhnMlpmTDFl" }
+                ]
+            }
+        ];
+
+        // الأصلي: بقية القنوات كما هي (تم إبقاؤها بعد القنوات الجديدة)
+        const playlist = [
+            // --- اضفنا أولاً القنوات متعددة الجودات (باستخدام أعلى جودة كملف افتراضي) ---
+            ...multiQualityChannels.map(ch => ({ title: ch.title, file: ch.qualities[0].url, type: "hls" })),
+
+            // الباقي من القنوات الموجودة في كودك الأصلي
+            {
+                "title": "On Sport HD",
+                "file": "https://fastly.live.brightcove.com/6386028928112/us-east-1/6416013238001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoieWN3Ymx1LmVncmVzcy5zenkzeHgiLCJhY2NvdW50X2lkIjoiNjQxNjAxMzIzODAwMSIsImVobiI6ImZhc3RseS5saXZlLmJyaWdodGNvdmUuY29tIiwiaXNzIjoiYmxpdmUtcGxheWJhY2stc291cmNlLWFwaSIsInN1YiI6InBhdGhtYXB0b2tlbiIsImF1ZCI6WyI2NDE2MDEzMjM4MDAxIl0sImp0aSI6IjYzODYwMjg5MjgxMTIifQ.7pBZHXb93BJ47HBrEiPQvSquoHi92NStYSX3JKYcznQ/chunklist.m3u8",
+                "type": "hls"
+            },
+            {
+                "title": "On Sport Max",
+                "file": "https://fastly.live.brightcove.com/6386027187112/us-east-1/6416013238001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoieWN3Ymx1LmVncmVzcy5zenkzeHgiLCJhY2NvdW50X2lkIjoiNjQxNjAxMzIzODAwMSIsImVobiI6ImZhc3RseS5saXZlLmJyaWdodGNvdmUuY29tIiwiaXNzIjoiYmxpdmUtcGxheWJhY2stc291cmNlLWFwaSIsInN1YiI6InBhdGhtYXB0b2tlbiIsImF1ZCI6WyI2NDE2MDEzMjM4MDAxIl0sImp0aSI6IjYzODYwMjcxODcxMTIifQ.o9bQYbACQ386kDSKbOPBVYlIhCz3WFgEHI3A8Pcw3qg/chunklist.m3u8",
+                "type": "hls"
+            },
+            {
+                "title": "On Sport Plus",
+                "file": "https://fastly.live.brightcove.com/6384149663112/us-east-1/6416013238001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoieWN3Ymx1LmVncmVzcy5zenkzeHgiLCJhY2NvdW50X2lkIjoiNjQxNjAxMzIzODAwMSIsImVobiI6ImZhc3RseS5saXZlLmJyaWdodGNvdmUuY29tIiwiaXNzIjoiYmxpdmUtcGxheWJhY2stc291cmNlLWFwaSIsInN1YiI6InBhdGhtYXB0b2tlbiIsImF1ZCI6WyI2NDE2MDEzMjM4MDAxIl0sImp0aSI6IjYzODQxNDk2NjMxMTIifQ.0yJpNEV0ZSId11mURgeaOhXZvov07Uj-VI_0qt0LLSQ/chunklist.m3u8",
+                "type": "hls"
+            },
+            {
+                "title": "Kora Plus",
+                "file": "https://fastly.live.brightcove.com/6386030131112/us-east-1/6416013238001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoieWN3Ymx1LmVncmVzcy5zenkzeHgiLCJhY2NvdW50X2lkIjoiNjQxNjAxMzIzODAwMSIsImVobiI6ImZhc3RseS5saXZlLmJyaWdodGNvdmUuY29tIiwiaXNzIjoiYmxpdmUtcGxheWJhY2stc291cmNlLWFwaSIsInN1YiI6InBhdGhtYXB0b2tlbiIsImF1ZCI6WyI2NDE2MDEzMjM4MDAxIl0sImp0aSI6IjYzODYwMzAxMzExMTIifQ.aZa3dfTqySgbsPGs64c0_JTfvR1mKUmvdlDJ1WTeDgo/chunklist.m3u8",
+                "type": "hls"
+            },
+            {
+                "title": "Kora Plus 2",
+                "file": "https://fastly.live.brightcove.com/6403055025112/us-east-1/6416013238001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoieWN3Ymx1LmVncmVzcy5zenkzeHgiLCJhY2NvdW50X2lkIjoiNjQxNjAxMzIzODAwMSIsImVobiI6ImZhc3RseS5saXZlLmJyaWdodGNvdmUuY29tIiwiaXNzIjoiYmxpdmUtcGxheWJhY2stc291cmNlLWFwaSIsInN1YiI6InBhdGhtYXB0b2tlbiIsImF1ZCI6WyI2NDE2MDEzMjM4MDAxIl0sImp0aSI6IjY0MDMwNTUwMjUxMTIifQ.Csg7lrJRiTyrEmve4yHdrm4fs715JRMK6TTz7YvCg1c/playlist-hls.m3u8",
+                "type": "hls"
+            },
+            {
+                "title": "Kora Plus 3",
+                "file": "https://fastly.live.brightcove.com/6386122937112/us-east-1/6416013238001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoieWN3Ymx1LmVncmVzcy5zenkzeHgiLCJhY2NvdW50X2lkIjoiNjQxNjAxMzIzODAwMSIsImVobiI6ImZhc3RseS5saXZlLmJyaWdodGNvdmUuY29tIiwiaXNzIjoiYmxpdmUtcGxheWJhY2stc291cmNlLWFwaSIsInN1YiI6InBhdGhtYXB0b2tlbiIsImF1ZCI6WyI2NDE2MDEzMjM4MDAxIl0sImp0aSI6IjYzODYxMjI5MzcxMTIifQ.HPPHHVyUxLnEyCqaO6AP7j1iCOBrMGE-zTe-7mV1-24/chunklist.m3u8",
+                "type": "hls"
+            }
+        ];
+
         const playerInstance = jwplayer("player").setup({
-            "playlist": [
-                {
-                    "title": "On Sport HD",
-                    "file": "https://fastly.live.brightcove.com/6386028928112/us-east-1/6416013238001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoieWN3Ymx1LmVncmVzcy5zenkzeHgiLCJhY2NvdW50X2lkIjoiNjQxNjAxMzIzODAwMSIsImVobiI6ImZhc3RseS5saXZlLmJyaWdodGNvdmUuY29tIiwiaXNzIjoiYmxpdmUtcGxheWJhY2stc291cmNlLWFwaSIsInN1YiI6InBhdGhtYXB0b2tlbiIsImF1ZCI6WyI2NDE2MDEzMjM4MDAxIl0sImp0aSI6IjYzODYwMjg5MjgxMTIifQ.7pBZHXb93BJ47HBrEiPQvSquoHi92NStYSX3JKYcznQ/chunklist.m3u8",
-                    "type": "hls"
-                },
-                {
-                    "title": "On Sport Max",
-                    "file": "https://fastly.live.brightcove.com/6386027187112/us-east-1/6416013238001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoieWN3Ymx1LmVncmVzcy5zenkzeHgiLCJhY2NvdW50X2lkIjoiNjQxNjAxMzIzODAwMSIsImVobiI6ImZhc3RseS5saXZlLmJyaWdodGNvdmUuY29tIiwiaXNzIjoiYmxpdmUtcGxheWJhY2stc291cmNlLWFwaSIsInN1YiI6InBhdGhtYXB0b2tlbiIsImF1ZCI6WyI2NDE2MDEzMjM4MDAxIl0sImp0aSI6IjYzODYwMjcxODcxMTIifQ.o9bQYbACQ386kDSKbOPBVYlIhCz3WFgEHI3A8Pcw3qg/chunklist.m3u8",
-                    "type": "hls"
-                },
-                {
-                    "title": "On Sport Plus",
-                    "file": "https://fastly.live.brightcove.com/6384149663112/us-east-1/6416013238001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoieWN3Ymx1LmVncmVzcy5zenkzeHgiLCJhY2NvdW50X2lkIjoiNjQxNjAxMzIzODAwMSIsImVobiI6ImZhc3RseS5saXZlLmJyaWdodGNvdmUuY29tIiwiaXNzIjoiYmxpdmUtcGxheWJhY2stc291cmNlLWFwaSIsInN1YiI6InBhdGhtYXB0b2tlbiIsImF1ZCI6WyI2NDE2MDEzMjM4MDAxIl0sImp0aSI6IjYzODQxNDk2NjMxMTIifQ.0yJpNEV0ZSId11mURgeaOhXZvov07Uj-VI_0qt0LLSQ/chunklist.m3u8",
-                    "type": "hls"
-                },
-                {
-                    "title": "Kora Plus",
-                    "file": "https://fastly.live.brightcove.com/6386030131112/us-east-1/6416013238001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoieWN3Ymx1LmVncmVzcy5zenkzeHgiLCJhY2NvdW50X2lkIjoiNjQxNjAxMzIzODAwMSIsImVobiI6ImZhc3RseS5saXZlLmJyaWdodGNvdmUuY29tIiwiaXNzIjoiYmxpdmUtcGxheWJhY2stc291cmNlLWFwaSIsInN1YiI6InBhdGhtYXB0b2tlbiIsImF1ZCI6WyI2NDE2MDEzMjM4MDAxIl0sImp0aSI6IjYzODYwMzAxMzExMTIifQ.aZa3dfTqySgbsPGs64c0_JTfvR1mKUmvdlDJ1WTeDgo/chunklist.m3u8",
-                    "type": "hls"
-                },
-                {
-                    "title": "Kora Plus 2",
-                    "file": "https://fastly.live.brightcove.com/6403055025112/us-east-1/6416013238001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoieWN3Ymx1LmVncmVzcy5zenkzeHgiLCJhY2NvdW50X2lkIjoiNjQxNjAxMzIzODAwMSIsImVobiI6ImZhc3RseS5saXZlLmJyaWdodGNvdmUuY29tIiwiaXNzIjoiYmxpdmUtcGxheWJhY2stc291cmNlLWFwaSIsInN1YiI6InBhdGhtYXB0b2tlbiIsImF1ZCI6WyI2NDE2MDEzMjM4MDAxIl0sImp0aSI6IjY0MDMwNTUwMjUxMTIifQ.Csg7lrJRiTyrEmve4yHdrm4fs715JRMK6TTz7YvCg1c/playlist-hls.m3u8",
-                    "type": "hls"
-                },
-                {
-                    "title": "Kora Plus 3",
-                    "file": "https://fastly.live.brightcove.com/6386122937112/us-east-1/6416013238001/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJob3N0IjoieWN3Ymx1LmVncmVzcy5zenkzeHgiLCJhY2NvdW50X2lkIjoiNjQxNjAxMzIzODAwMSIsImVobiI6ImZhc3RseS5saXZlLmJyaWdodGNvdmUuY29tIiwiaXNzIjoiYmxpdmUtcGxheWJhY2stc291cmNlLWFwaSIsInN1YiI6InBhdGhtYXB0b2tlbiIsImF1ZCI6WyI2NDE2MDEzMjM4MDAxIl0sImp0aSI6IjYzODYxMjI5MzcxMTIifQ.HPPHHVyUxLnEyCqaO6AP7j1iCOBrMGE-zTe-7mV1-24/chunklist.m3u8",
-                    "type": "hls"
-                }
-            ],
-            "width": "100%",
-            "height": "100%",
-            "autostart": true,
-            "stretching": "uniform"
+            playlist: playlist,
+            width: "100%",
+            height: "100%",
+            autostart: true,
+            stretching: "uniform"
+        });
+
+        // helper: map playlist indices which have multiple qualities
+        const qualitiesByIndex = {};
+        // Because we inserted multiQualityChannels first, their indices are 0..N-1
+        multiQualityChannels.forEach((ch, idx) => {
+            qualitiesByIndex[idx] = ch.qualities;
         });
 
         function toggleMenu() {
@@ -123,8 +194,19 @@
                 if(i === index) el.classList.add('active-item');
                 else el.classList.remove('active-item');
             });
-            playerInstance.playlistItem(index);
+            // If this channel has qualities defined in qualitiesByIndex, load default quality (first)
+            if(qualitiesByIndex[index]) {
+                // load chosen quality (default to first)
+                const q = qualitiesByIndex[index][0];
+                playerInstance.load([{ title: playlist[index].title || '', file: q.url, type: 'hls' }]);
+                playerInstance.play();
+            } else {
+                // load by playlist index
+                playerInstance.playlistItem(index);
+            }
+            // hide menus
             toggleMenu();
+            hideQualityMenu();
         }
 
         // إظهار القائمة أوتوماتيك لو البث فاصل
@@ -134,6 +216,43 @@
                 menu.classList.add('active');
             }
         });
+
+        // quality menu logic
+        function createQualityMenu() {
+            const qm = document.createElement('div');
+            qm.id = 'customQualityMenu';
+            qm.className = 'quality-menu';
+            qm.innerHTML = '<div id="qualityItems"></div>';
+            document.body.appendChild(qm);
+            return qm;
+        }
+        function showQualityMenu(items, activeLabel) {
+            let qm = document.getElementById('customQualityMenu');
+            if(!qm) qm = createQualityMenu();
+            const container = qm.querySelector('#qualityItems');
+            container.innerHTML = '';
+            items.forEach(it => {
+                const el = document.createElement('div');
+                el.className = 'quality-item' + (it.label === activeLabel ? ' active-quality' : '');
+                el.textContent = it.label;
+                el.onclick = function(e) {
+                    // load chosen quality
+                    playerInstance.load([{ title: playlist[playerInstance.getPlaylistIndex()]?.title || '', file: it.url, type: 'hls' }]);
+                    playerInstance.play();
+                    // mark active
+                    const all = container.querySelectorAll('.quality-item');
+                    all.forEach(a => a.classList.remove('active-quality'));
+                    el.classList.add('active-quality');
+                    hideQualityMenu();
+                };
+                container.appendChild(el);
+            });
+            qm.classList.add('active');
+        }
+        function hideQualityMenu() {
+            const qm = document.getElementById('customQualityMenu');
+            if(qm) qm.classList.remove('active');
+        }
 
         playerInstance.on('ready', function() {
             // زرار القائمة جوه البلاير
@@ -154,46 +273,105 @@
                 }, "stretch-button"
             );
 
+            // زر الجودات المخصص
+            const qualityIcon = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTEyIDJMMTcgNy4yVjEwaDJ2NEgxMHYySDhoLTIuN3YtMi4yTDcuNSA4LjVMMTIgMiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==";
+            playerInstance.addButton(qualityIcon, "الجودة", function() {
+                // determine current playlist index
+                const idx = playerInstance.getPlaylistIndex();
+                const qualities = qualitiesByIndex[idx];
+                if(qualities && qualities.length) {
+                    // determine active label by current file
+                    const currentFile = (playerInstance.getPlaylist && playerInstance.getPlaylist()) ? (playerInstance.getPlaylist()[0]?.file || '') : '';
+                    const active = qualities.find(q => q.url === currentFile) || qualities[0];
+                    showQualityMenu(qualities, active.label);
+                } else {
+                    // no custom qualities for current channel: toggle native or hide
+                    // as fallback, show small tooltip-like menu saying "لا توجد جودات"
+                    showQualityMenu([{label: 'لا توجد جودات', url: ''}], '');
+                }
+            }, "quality-button");
+
             // حقن القائمة في جسم الصفحة بره المشغل
             const onSportLogo = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60'%3E%3Cpath d='M0 0l70 30L0 60z' fill='%23cbf128'/%3E%3Ctext x='7' y='38' font-family='Arial' font-weight='bold' font-size='22' fill='%23000'%3EON%3C/text%3E%3Ctext x='75' y='40' font-family='Arial' font-weight='bold' font-style='italic' font-size='35' fill='%23fff' stroke='%23000' stroke-width='1.5'%3Esport%3C/text%3E%3C/svg%3E"; 
             const koraPlusLogo = "https://koraplus.com/assets/images/logo.png";
             
-            const menuHtml = `
+            // --- انشاء HTML للقائمة مع وضع القنوات الثلاث الجديدة في المقدمة ---
+            let menuHtml = `
                 <div id="customChannelMenu" class="channel-menu" dir="rtl">
                     <div class="channel-menu-header">
                         <h3>باقة القنوات</h3>
                         <span class="close-btn" onclick="toggleMenu()">&times;</span>
                     </div>
-                    <div class="channel-menu-item active-item" onclick="changeChannel(0)">
-                        <img src="${onSportLogo}" alt="Icon">
-                        <span>On Sport HD</span>
-                    </div>
-                    <div class="channel-menu-item" onclick="changeChannel(1)">
-                        <img src="${onSportLogo}" alt="Icon">
-                        <span>On Sport Max</span>
-                    </div>
-                    <div class="channel-menu-item" onclick="changeChannel(2)">
-                        <img src="${onSportLogo}" alt="Icon">
-                        <span>On Sport Plus</span>
-                    </div>
-                    <div class="channel-menu-item" onclick="changeChannel(3)">
-                        <img src="${koraPlusLogo}" alt="Icon">
-                        <span>Kora Plus</span>
-                    </div>
-                    <div class="channel-menu-item" onclick="changeChannel(4)">
-                        <img src="${koraPlusLogo}" alt="Icon">
-                        <span>Kora Plus 2</span>
-                    </div>
-                    <div class="channel-menu-item" onclick="changeChannel(5)">
-                        <img src="${koraPlusLogo}" alt="Icon">
-                        <span>Kora Plus 3</span>
-                    </div>
-                </div>
             `;
+
+            // add multi-quality channels first (consistent with playlist order)
+            multiQualityChannels.forEach((ch, i) => {
+                // display logo and name; onclick uses overall index i (they are at 0..)
+                menuHtml += `
+                    <div class="channel-menu-item ${i === 0 ? 'active-item' : ''}" onclick="changeChannel(${i})">
+                        <img src="${onSportLogo}" alt="Icon">
+                        <span>${ch.title}</span>
+                    </div>
+                `;
+            });
+
+            // then add the original items (indices offset by multiQualityChannels.length)
+            const baseIndex = multiQualityChannels.length;
+            const originals = [
+                { title: "On Sport HD", logo: onSportLogo },
+                { title: "On Sport Max", logo: onSportLogo },
+                { title: "On Sport Plus", logo: onSportLogo },
+                { title: "Kora Plus", logo: koraPlusLogo },
+                { title: "Kora Plus 2", logo: koraPlusLogo },
+                { title: "Kora Plus 3", logo: koraPlusLogo }
+            ];
+            originals.forEach((o, idx) => {
+                const overallIndex = baseIndex + idx;
+                menuHtml += `
+                    <div class="channel-menu-item" onclick="changeChannel(${overallIndex})">
+                        <img src="${o.logo}" alt="Icon">
+                        <span>${o.title}</span>
+                    </div>
+                `;
+            });
+
+            menuHtml += `</div>`;
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = menuHtml;
             document.body.appendChild(tempDiv.firstElementChild);
+
+            // create quality menu element (hidden)
+            if(!document.getElementById('customQualityMenu')) createQualityMenu();
+
+            // when the playlist item changes, update active class in menu and show/hide quality button if needed
+            playerInstance.on('playlistItem', function() {
+                const idx = playerInstance.getPlaylistIndex();
+                // update menu active state
+                const items = document.querySelectorAll('.channel-menu-item');
+                items.forEach((el, i) => {
+                    if(i === idx) el.classList.add('active-item');
+                    else el.classList.remove('active-item');
+                });
+                // hide quality menu and update visibility/tooltip
+                hideQualityMenu();
+                const qb = document.querySelector('.jw-controlbar .jw-button.quality-button, .jw-controlbar .jw-button[title="الجودة"]');
+                // cannot reliably access JW internal DOM class across versions; instead we keep our button but only show meaningful menu if qualities exist
+                // nothing to do here besides keeping custom button; its click handler checks qualitiesByIndex
+            });
         });
+
+        // click outside quality menu closes it
+        document.addEventListener('click', function(e) {
+            const qm = document.getElementById('customQualityMenu');
+            if(!qm) return;
+            if(qm.classList.contains('active')) {
+                // if click is outside the quality menu and not on the quality-button, close
+                const qBtn = document.querySelector('.jw-controlbar .jw-button.quality-button, .jw-button[title="الجودة"]');
+                if(qBtn && (qBtn.contains(e.target) || e.target === qBtn)) return;
+                if(!qm.contains(e.target)) qm.classList.remove('active');
+            }
+        });
+
     </script>
 </body>
 </html>
