@@ -61,38 +61,45 @@
             padding: 2px; object-fit: contain; box-sizing: border-box;
         }
 
-        /* ستايل قائمة الجودة المعدل والمضبوط بدقة */
+        /* ستايل قائمة الجودة - محمي بالكامل من تأثيرات المشغل */
         .jw-settings-menu {
-            display: none;
-            position: absolute;
-            bottom: 45px; /* ارتفاع دقيق فوق الشريط */
-            right: 60px;  /* محاذاة دقيقة فوق الترس */
-            background: rgba(28, 28, 28, 0.95);
-            border-radius: 5px;
-            padding: 0;
-            z-index: 999999;
-            flex-direction: column;
-            width: 125px; /* عرض ثابت يمنع التمدد العشوائي */
-            border: 1px solid #333;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
-            margin: 0;
+            display: none !important;
+            position: absolute !important;
+            bottom: 50px !important; 
+            right: 65px !important;  
+            background: rgba(28, 28, 28, 0.95) !important;
+            border-radius: 6px !important;
+            padding: 5px 0 !important;
+            z-index: 999999 !important;
+            flex-direction: column !important;
+            width: 120px !important; 
+            min-width: 120px !important;
+            max-width: 120px !important;
+            height: auto !important; /* إجبار الارتفاع ليكون بحجم المحتوى فقط */
+            border: 1px solid #444 !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8) !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
         }
-        .jw-settings-menu.active { display: flex; }
+        .jw-settings-menu.active { display: flex !important; }
         .jw-settings-item {
-            padding: 12px 0; /* مسافات رأسية فقط لمنع التمدد وتوسيط النص */
-            color: #eee;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 13px; 
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            border-bottom: 1px solid #333;
-            transition: 0.2s background, 0.2s color;
-            margin: 0;
+            padding: 10px 0 !important; 
+            color: #eee !important;
+            font-family: Arial, sans-serif !important;
+            font-size: 13px !important; 
+            font-weight: bold !important;
+            cursor: pointer !important;
+            text-align: center !important;
+            border-bottom: 1px solid #333 !important;
+            transition: 0.2s background, 0.2s color !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
+            height: auto !important; /* حماية الارتفاع الداخلي */
+            width: 100% !important;
         }
-        .jw-settings-item:last-child { border-bottom: none; }
-        .jw-settings-item:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
-        .jw-settings-item.active-item { color: #1dcf60; }
+        .jw-settings-item:last-child { border-bottom: none !important; }
+        .jw-settings-item:hover { background: rgba(255, 255, 255, 0.1) !important; color: #fff !important; }
+        .jw-settings-item.active-item { color: #1dcf60 !important; }
     </style>
     
     <script src="https://content.jwplatform.com/libraries/SAHhwvZq.js"></script>
