@@ -29,6 +29,7 @@
         }
         .jw-icon-playlist, .jw-icon-next, .jw-related-btn { display: none !important; }
 
+        /* ستايل قائمة القنوات */
         .channel-menu {
             display: none; position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%); background: rgba(20, 20, 20, 0.95);
@@ -60,6 +61,37 @@
             width: 40px; height: 25px; border-radius: 4px; background: transparent; 
             padding: 2px; object-fit: contain; box-sizing: border-box;
         }
+
+        /* ستايل قائمة الجودة الجديدة الاحترافية */
+        .jw-settings-menu {
+            display: none;
+            position: absolute;
+            bottom: 60px;
+            right: 65px;
+            background: rgba(28, 28, 28, 0.95);
+            border-radius: 8px;
+            padding: 0;
+            z-index: 999999;
+            flex-direction: column;
+            min-width: 140px;
+            border: 1px solid #444;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+        }
+        .jw-settings-menu.active { display: flex; }
+        .jw-settings-item {
+            padding: 15px 20px;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            transition: 0.2s background;
+        }
+        .jw-settings-item:last-child { border-bottom: none; }
+        .jw-settings-item:hover { background: rgba(255, 255, 255, 0.1); }
+        .jw-settings-item.active-item { color: #1dcf60; }
     </style>
     
     <script src="https://content.jwplatform.com/libraries/SAHhwvZq.js"></script>
@@ -69,22 +101,30 @@
     <div id="player"></div>
 
     <script>
+        // دالة لاختيار رابط الجودة بناءً على سرعة النت الحقيقية
+        function getAutoQualityUrl(qList) {
+            let speed = navigator.connection ? navigator.connection.downlink : 5; // السرعة بالميجا
+            if (speed >= 5) return qList[1].url;      // 1080P
+            else if (speed >= 2) return qList[2].url; // 720P
+            else return qList[3].url;                 // 480P
+        }
+
         // بيانات الجودات للقنوات الثلاثة الأولى
         window.customQualities = {
             0: [
-                { label: "تلقائي", url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F53.css%3Fx%3D%2Fhls%2F%26token%3DSUhQUk1VOUh1V2ZXTFV3" },
+                { label: "تلقائي (Auto)", isAuto: true },
                 { label: "1080P", url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F53.css%3Fx%3D%2Fhls%2F%26token%3DSUhQUk1VOUh1V2ZXTFV3" },
                 { label: "720P", url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F1415.css%3Fx%3D%2Fhls%2F%26token%3DQllabUZBYnAxemhLb05N" },
                 { label: "480P", url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F1412.css%3Fx%3D%2Fhls%2F%26token%3DQllabUZBYnAxemhLb05N" }
             ],
             1: [
-                { label: "تلقائي", url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F56.css%3Fx%3D%2Fhls%2F%26token%3DSWdGOTFaZ3VVTTVPenZh" },
+                { label: "تلقائي (Auto)", isAuto: true },
                 { label: "1080P", url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F56.css%3Fx%3D%2Fhls%2F%26token%3DSWdGOTFaZ3VVTTVPenZh" },
                 { label: "720P", url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F1439.css%3Fx%3D%2Fhls%2F%26token%3DNjE4dUd0YU84dXlNc3Y0" },
                 { label: "480P", url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F1436.css%3Fx%3D%2Fhls%2F%26token%3DMXV0a1FGc3RXeExQbGE1" }
             ],
             2: [
-                { label: "تلقائي", url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F638.css%3Fx%3D%2Fhls%2F%26token%3Dd1BGcG1IT204ZFZQT3c2" },
+                { label: "تلقائي (Auto)", isAuto: true },
                 { label: "1080P", url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F638.css%3Fx%3D%2Fhls%2F%26token%3Dd1BGcG1IT204ZFZQT3c2" },
                 { label: "720P", url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F1445.css%3Fx%3D%2Fhls%2F%26token%3DQXdPaE5McnhuSkJxQkk5" },
                 { label: "480P", url: "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F1442.css%3Fx%3D%2Fhls%2F%26token%3DSVdPSEN5SFhnMlpmTDFl" }
@@ -97,17 +137,17 @@
             "playlist": [
                 {
                     "title": "ON SPORTS HD (24/7)",
-                    "file": "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F53.css%3Fx%3D%2Fhls%2F%26token%3DSUhQUk1VOUh1V2ZXTFV3",
+                    "file": getAutoQualityUrl(window.customQualities[0]),
                     "type": "hls"
                 },
                 {
                     "title": "ON SPORTS MAX (24/7)",
-                    "file": "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F56.css%3Fx%3D%2Fhls%2F%26token%3DSWdGOTFaZ3VVTTVPenZh",
+                    "file": getAutoQualityUrl(window.customQualities[1]),
                     "type": "hls"
                 },
                 {
                     "title": "ON SPORTS PLUS (24/7)",
-                    "file": "https://live-tv-116849026166.europe-west1.run.app/api/sindbad/m3u8?url=http%3A%2F%2Fassets.pushyourcss.world%3A8080%2Fassets%2Fres2%2Fjava2%2F638.css%3Fx%3D%2Fhls%2F%26token%3Dd1BGcG1IT204ZFZQT3c2",
+                    "file": getAutoQualityUrl(window.customQualities[2]),
                     "type": "hls"
                 },
                 {
@@ -151,7 +191,6 @@
             const menu = document.getElementById('customChannelMenu');
             if(menu) {
                 menu.classList.toggle('active');
-                // غلق قائمة الجودة إذا كانت مفتوحة
                 const qMenu = document.getElementById('customQualityMenu');
                 if(qMenu && qMenu.classList.contains('active')) qMenu.classList.remove('active');
             }
@@ -164,22 +203,20 @@
                     renderQualityMenu(playerInstance.getPlaylistIndex());
                 }
                 menu.classList.toggle('active');
-                
-                // غلق قائمة القنوات إذا كانت مفتوحة
                 const cMenu = document.getElementById('customChannelMenu');
                 if(cMenu && cMenu.classList.contains('active')) cMenu.classList.remove('active');
             }
         };
 
         window.renderQualityMenu = function(chIndex) {
-            const container = document.getElementById('qualityItemsContainer');
+            const container = document.getElementById('customQualityMenu');
             container.innerHTML = '';
             if(!window.customQualities[chIndex]) return;
             
             window.customQualities[chIndex].forEach((q, qIndex) => {
                 let div = document.createElement('div');
-                div.className = 'channel-menu-item' + (window.activeQualities[chIndex] === qIndex ? ' active-item' : '');
-                div.innerHTML = '<span>' + q.label + '</span>';
+                div.className = 'jw-settings-item' + (window.activeQualities[chIndex] === qIndex ? ' active-item' : '');
+                div.innerHTML = q.label;
                 div.onclick = function() { changeQuality(chIndex, qIndex); };
                 container.appendChild(div);
             });
@@ -191,13 +228,18 @@
                 return;
             }
             window.activeQualities[chIndex] = qIndex;
-            let qUrl = window.customQualities[chIndex][qIndex].url;
+            
+            let qUrl = window.customQualities[chIndex][qIndex].isAuto 
+                       ? getAutoQualityUrl(window.customQualities[chIndex]) 
+                       : window.customQualities[chIndex][qIndex].url;
             
             let p = playerInstance.getPlaylist();
             p[chIndex].file = qUrl;
             
+            let currentTime = playerInstance.getPosition();
             playerInstance.load(p);
             playerInstance.playlistItem(chIndex);
+            playerInstance.seek(currentTime);
             
             toggleQualityMenu();
         };
@@ -216,7 +258,6 @@
             toggleMenu();
         }
 
-        // إظهار القائمة أوتوماتيك لو البث فاصل
         playerInstance.on('error', function(e) {
             const menu = document.getElementById('customChannelMenu');
             if(menu && !menu.classList.contains('active')) {
@@ -225,11 +266,10 @@
         });
 
         playerInstance.on('ready', function() {
-            // زرار الجودة (يظهر للقنوات الأولى فقط)
-            const hdIcon = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xOSA4aC0ydjNoLTJWOGgtMnY4aDJ2LTNoMnYzaDJWOHptLTggMEg3djhoNGMxLjEgMCAyLS45IDItMnYtNGMwLTEuMS0uOS0yLTItMnptMCA2SDl2LTRoMnY0eiIvPjwvc3ZnPg==";
-            playerInstance.addButton(hdIcon, "جودة البث", function() { toggleQualityMenu(); }, "quality-button");
+            // أيقونة الترس (الإعدادات) لزر الجودة
+            const gearIcon = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xOS4xNCwxMi45NGMwLjA0LTAuMywwLjA2LTAuNjEsMC4wNi0wLjk0YzAtMC4zMi0wLjAyLTAuNjQtMC4wNi0wLjk0bDIuMDMtMS41OGMwLjE4LTAuMTQsMC4yMy0wLjQxLDAuMTItMC42MSBsLTEuOTItMy4zMmMtMC4xMi0wLjIyLTAuMzctMC4yOS0wLjU5LTAuMjJsLTIuMzksMC45NmMtMC41LTAuMzgtMS4wMy0wLjctMS42Mi0wLjk0TDE0LjQsMi44MWMtMC4wNC0wLjI0LTAuMjQtMC40MS0wLjQ4LTAuNDEgaC0zLjg0Yy0wLjI0LDAtMC40MywwLjE3LTAuNDcsMC40MUw5LjI1LDUuMzVDOC42Niw1LjU5LDguMTIsNS45Miw3LjYzLDYuMjlMNS4yNCw1LjMzYy0wLjIyLTAuMDgtMC40NywwLTAuNTksMC4yMkwyLjczLDguODcgQzIuNjIsOS4wOCwyLjY2LDkuMzQsMi44Niw5LjQ4bDIuMDMsMS41OEM0Ljg0LDExLjM2LDQuOCwxMS42OSw0LjgsMTJzMC4wMiwwLjY0LDAuMDYsMC45NGwtMi4wMywxLjU4IGMtMC4xOCwwLjE0LTAuMjMsMC40MS0wLjEyLDAuNjFsMS45MiwzLjMyYzAuMTIsMC4yMiwwLjM3LDAuMjksMC41OSwwLjIyTDkuNiwxNy42OWMwLjUsMC4zOCwxLjAzLDAuNywxLjYyLDAuOTRsMC4zNiwyLjU0IGMwLjA1LDAuMjQsMC4yNCwwLjQxLDAuNDgsMC40MWgzLjg0YzAuMjQsMCwwLjQ0LTAuMTcsMC40Ny0wLjQxbDAuMzYtMi41NGMwLjU5LTAuMjQsMS4xMy0wLjU2LDEuNjItMC45NGwyLjM5LDAuOTYgYzAuMjIsMC4wOCwwLjQ3LDAsMC41OS0wLjIybDEuOTItMy4zMmMwLjEyLTAuMjIsMC4wNy0wLjQ5LTAuMTItMC42MUwxOS4xNCwxMi45NHogTTEyLDE1LjZjLTEuOTgsMC0zLjYtMS42Mi0zLjYtMy42IHMxLjYyLTMuNiwzLjYtMy42czMuNiwxLjYyLDMuNiwzLjZTMTMuOTgsMTUuNiwxMiwxNS42eiIvPjwvc3ZnPg==";
+            playerInstance.addButton(gearIcon, "جودة البث", function() { toggleQualityMenu(); }, "quality-button");
 
-            // زرار القائمة جوه البلاير
             const listIcon = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjIuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNNCA2aDE2TTQgMTJoMTZNNCAxOGgxNiIvPjwvc3ZnPg==";
             playerInstance.addButton(listIcon, "قائمة القنوات", function() { toggleMenu(); }, "channels-button");
 
@@ -247,7 +287,6 @@
                 }, "stretch-button"
             );
 
-            // حقن القوائم في جسم الصفحة بره المشغل
             const onSportLogo = "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 60'%3E%3Cpath d='M0 0l70 30L0 60z' fill='%23cbf128'/%3E%3Ctext x='7' y='38' font-family='Arial' font-weight='bold' font-size='22' fill='%23000'%3EON%3C/text%3E%3Ctext x='75' y='40' font-family='Arial' font-weight='bold' font-style='italic' font-size='35' fill='%23fff' stroke='%23000' stroke-width='1.5'%3Esport%3C/text%3E%3C/svg%3E"; 
             const koraPlusLogo = "https://koraplus.com/assets/images/logo.png";
             
@@ -295,18 +334,24 @@
                     </div>
                 </div>
 
-                <div id="customQualityMenu" class="channel-menu" dir="rtl" style="min-width: 180px;">
-                    <div class="channel-menu-header">
-                        <h3>جودة البث</h3>
-                        <span class="close-btn" onclick="toggleQualityMenu()">&times;</span>
-                    </div>
-                    <div id="qualityItemsContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                <div id="customQualityMenu" class="jw-settings-menu" dir="rtl">
+                    <!-- سيتم إضافة الجودات هنا ديناميكياً -->
                 </div>
             `;
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = menuHtml;
-            while(tempDiv.firstChild) {
-                document.body.appendChild(tempDiv.firstChild);
+            
+            // حقن القوائم داخل حاوية jwplayer لضمان ظهورها في الشاشة الكاملة
+            const playerContainer = document.querySelector('.jwplayer');
+            if (playerContainer) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = menuHtml;
+                while(tempDiv.firstChild) {
+                    playerContainer.appendChild(tempDiv.firstChild);
+                }
+            } else {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = menuHtml;
+                document.body.appendChild(tempDiv.firstElementChild);
+                document.body.appendChild(tempDiv.lastElementChild);
             }
         });
 
@@ -316,6 +361,9 @@
             if (qBtn) {
                 qBtn.style.display = (e.index <= 2) ? '' : 'none';
             }
+            // إغلاق قائمة الجودة عند تغيير القناة
+            const qMenu = document.getElementById('customQualityMenu');
+            if(qMenu && qMenu.classList.contains('active')) qMenu.classList.remove('active');
         });
     </script>
 </body>
