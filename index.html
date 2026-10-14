@@ -61,36 +61,38 @@
             padding: 2px; object-fit: contain; box-sizing: border-box;
         }
 
-        /* ستايل قائمة الجودة المعدلة (احترافية، مدمجة، وفوق الترس مباشرة) */
+        /* ستايل قائمة الجودة المعدل والمضبوط بدقة */
         .jw-settings-menu {
             display: none;
             position: absolute;
-            bottom: 45px; /* رفع القائمة فوق الشريط السفلي مباشرة */
-            right: 75px;  /* محاذاة أفقية دقيقة فوق أيقونة الترس */
-            background: rgba(30, 30, 30, 0.95);
-            border-radius: 6px;
+            bottom: 45px; /* ارتفاع دقيق فوق الشريط */
+            right: 60px;  /* محاذاة دقيقة فوق الترس */
+            background: rgba(28, 28, 28, 0.95);
+            border-radius: 5px;
             padding: 0;
             z-index: 999999;
             flex-direction: column;
-            min-width: 110px; /* تصغير العرض ليطابق الصورة */
-            border: 1px solid #444;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+            width: 125px; /* عرض ثابت يمنع التمدد العشوائي */
+            border: 1px solid #333;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            margin: 0;
         }
         .jw-settings-menu.active { display: flex; }
         .jw-settings-item {
-            padding: 10px 15px; /* تصغير المسافات الداخلية لتكون احترافية */
-            color: #ddd;
+            padding: 12px 0; /* مسافات رأسية فقط لمنع التمدد وتوسيط النص */
+            color: #eee;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            font-size: 13px; /* تصغير الخط */
+            font-size: 13px; 
             font-weight: bold;
             cursor: pointer;
             text-align: center;
             border-bottom: 1px solid #333;
             transition: 0.2s background, 0.2s color;
+            margin: 0;
         }
         .jw-settings-item:last-child { border-bottom: none; }
         .jw-settings-item:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
-        .jw-settings-item.active-item { color: #1dcf60; } /* اللون الأخضر للاختيار الفعال */
+        .jw-settings-item.active-item { color: #1dcf60; }
     </style>
     
     <script src="https://content.jwplatform.com/libraries/SAHhwvZq.js"></script>
@@ -100,12 +102,11 @@
     <div id="player"></div>
 
     <script>
-        // دالة لاختيار الجودة المبدئية التلقائية بناءً على سرعة النت
         function getAutoQualityUrl(qList) {
             let speed = navigator.connection ? navigator.connection.downlink : 5;
-            if (speed >= 5) return qList[1].url;      // 1080P للسرعات العالية
-            else if (speed >= 2) return qList[2].url; // 720P للسرعات المتوسطة
-            else return qList[3].url;                 // 480P للسرعات الضعيفة
+            if (speed >= 5) return qList[1].url;
+            else if (speed >= 2) return qList[2].url;
+            else return qList[3].url;
         }
 
         window.customQualities = {
@@ -220,7 +221,6 @@
             });
         };
 
-        // إصلاح جذري لدالة تغيير الجودة: إنشاء قائمة تشغيل جديدة لإجبار المشغل على التحديث فوراً
         window.changeQuality = function(chIndex, qIndex) {
             if (window.activeQualities[chIndex] === qIndex) {
                 toggleQualityMenu();
@@ -232,7 +232,6 @@
                        ? getAutoQualityUrl(window.customQualities[chIndex]) 
                        : window.customQualities[chIndex][qIndex].url;
             
-            // استنساخ قائمة التشغيل الحالية وبناء مصفوفة جديدة لضمان التحديث
             let currentList = playerInstance.getPlaylist();
             let newList = [];
             for(let i = 0; i < currentList.length; i++) {
@@ -245,11 +244,9 @@
             
             let currentTime = playerInstance.getPosition();
             
-            // تحميل البلاي ليست الجديدة كاملة ليعمل الرابط الجديد بدون أخطاء الكاش
             playerInstance.load(newList);
             playerInstance.playlistItem(chIndex);
             
-            // استئناف التشغيل من نفس النقطة التي توقف عندها
             playerInstance.once('play', function() {
                 if (currentTime > 0) {
                     playerInstance.seek(currentTime);
@@ -282,7 +279,6 @@
         });
 
         playerInstance.on('ready', function() {
-            // أيقونة الترس (الإعدادات) لزر الجودة المخصصة
             const gearIcon = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0id2hpdGUiPjxwYXRoIGQ9Ik0xOS4xNCwxMi45NGMwLjA0LTAuMywwLjA2LTAuNjEsMC4wNi0wLjk0YzAtMC4zMi0wLjAyLTAuNjQtMC4wNi0wLjk0bDIuMDMtMS41OGMwLjE4LTAuMTQsMC4yMy0wLjQxLDAuMTItMC42MSBsLTEuOTItMy4zMmMtMC4xMi0wLjIyLTAuMzctMC4yOS0wLjU5LTAuMjJsLTIuMzksMC45NmMtMC41LTAuMzgtMS4wMy0wLjctMS42Mi0wLjk0TDE0LjQsMi44MWMtMC4wNC0wLjI0LTAuMjQtMC40MS0wLjQ4LTAuNDEgaC0zLjg0Yy0wLjI0LDAtMC40MywwLjE3LTAuNDcsMC40MUw5LjI1LDUuMzVDOC42Niw1LjU5LDguMTIsNS45Miw3LjYzLDYuMjlMNS4yNCw1LjMzYy0wLjIyLTAuMDgtMC40NywwLTAuNTksMC4yMkwyLjczLDguODcgQzIuNjIsOS4wOCwyLjY2LDkuMzQsMi44Niw5LjQ4bDIuMDMsMS41OEM0Ljg0LDExLjM2LDQuOCwxMS42OSw0LjgsMTJzMC4wMiwwLjY0LDAuMDYsMC45NGwtMi4wMywxLjU4IGMtMC4xOCwwLjE0LTAuMjMsMC40MS0wLjEyLDAuNjFsMS45MiwzLjMyYzAuMTIsMC4yMiwwLjM3LDAuMjksMC41OSwwLjIyTDkuNiwxNy42OWMwLjUsMC4zOCwxLjAzLDAuNywxLjYyLDAuOTRsMC4zNiwyLjU0IGMwLjA1LDAuMjQsMC4yNCwwLjQxLDAuNDgsMC40MWgzLjg0YzAuMjQsMCwwLjQ0LTAuMTcsMC40Ny0wLjQxbDAuMzYtMi41NGMwLjU5LTAuMjQsMS4xMy0wLjU2LDEuNjItMC45NGwyLjM5LDAuOTYgYzAuMjIsMC4wOCwwLjQ3LDAsMC41OS0wLjIybDEuOTItMy4zMmMwLjEyLTAuMjIsMC4wNy0wLjQ5LTAuMTItMC42MUwxOS4xNCwxMi45NHogTTEyLDE1LjZjLTEuOTgsMC0zLjYtMS42Mi0zLjYtMy42IHMxLjYyLTMuNiwzLjYtMy42czMuNiwxLjYyLDMuNiwzLjZTMTMuOTgsMTUuNiwxMiwxNS42eiIvPjwvc3ZnPg==";
             playerInstance.addButton(gearIcon, "جودة البث", function() { toggleQualityMenu(); }, "quality-button");
 
@@ -355,7 +351,6 @@
                 </div>
             `;
             
-            // حقن القوائم داخل حاوية jwplayer لضمان ظهورها واستقرارها في وضع الشاشة الكاملة
             const playerContainer = document.querySelector('.jwplayer');
             if (playerContainer) {
                 const tempDiv = document.createElement('div');
@@ -371,13 +366,11 @@
             }
         });
 
-        // إخفاء زر الجودة المخصص إذا تم اختيار القنوات التي تمتلك زر جودة أصلي (من الرابعة للآخر)
         playerInstance.on('playlistItem', function(e) {
             const qBtn = document.querySelector('.jw-button-color[button="quality-button"]');
             if (qBtn) {
                 qBtn.style.display = (e.index <= 2) ? '' : 'none';
             }
-            // إغلاق قائمة الجودة تلقائياً عند تغيير القناة
             const qMenu = document.getElementById('customQualityMenu');
             if(qMenu && qMenu.classList.contains('active')) qMenu.classList.remove('active');
         });
