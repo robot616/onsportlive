@@ -61,29 +61,32 @@
             padding: 2px; object-fit: contain; box-sizing: border-box;
         }
 
-        /* ستايل قائمة الجودة - محمي بالكامل من تأثيرات المشغل */
+        /* ستايل قائمة الجودة - تم ضبط الارتفاع والمكان ليظهر فوق الشريط بدون فراغات */
         .jw-settings-menu {
             display: none !important;
             position: absolute !important;
-            bottom: 50px !important; 
+            bottom: 60px !important; /* رفع القائمة فوق الشريط السفلي مباشرة */
             right: 65px !important;  
             background: rgba(28, 28, 28, 0.95) !important;
             border-radius: 6px !important;
-            padding: 5px 0 !important;
+            padding: 0 !important; /* إزالة الفراغات لغلق المربع على الخيارات */
             z-index: 999999 !important;
             flex-direction: column !important;
             width: 120px !important; 
             min-width: 120px !important;
             max-width: 120px !important;
-            height: auto !important; /* إجبار الارتفاع ليكون بحجم المحتوى فقط */
+            height: fit-content !important; 
+            min-height: auto !important;
+            max-height: max-content !important; /* إجبار الارتفاع ليكون بحجم الخيارات فقط */
             border: 1px solid #444 !important;
             box-shadow: 0 4px 15px rgba(0,0,0,0.8) !important;
             margin: 0 !important;
             box-sizing: border-box !important;
+            overflow: hidden !important; /* إخفاء أي تمدد أو فراغات زائدة */
         }
         .jw-settings-menu.active { display: flex !important; }
         .jw-settings-item {
-            padding: 10px 0 !important; 
+            padding: 12px 0 !important; 
             color: #eee !important;
             font-family: Arial, sans-serif !important;
             font-size: 13px !important; 
@@ -94,8 +97,10 @@
             transition: 0.2s background, 0.2s color !important;
             margin: 0 !important;
             box-sizing: border-box !important;
-            height: auto !important; /* حماية الارتفاع الداخلي */
+            height: auto !important;
             width: 100% !important;
+            display: block !important;
+            line-height: 1 !important;
         }
         .jw-settings-item:last-child { border-bottom: none !important; }
         .jw-settings-item:hover { background: rgba(255, 255, 255, 0.1) !important; color: #fff !important; }
