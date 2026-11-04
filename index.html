@@ -124,28 +124,36 @@
         /* ===== الشاشة الرئيسية ===== */
         #homeScreen {
             display: none; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
-            z-index: 90000; overflow-y: auto; box-sizing: border-box; padding: 24px 20px;
-            background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.85)),
-                        url('https://i.postimg.cc/SstpFPVr/2226.jpg') center / cover no-repeat;
+            z-index: 90000; overflow: hidden; box-sizing: border-box; padding: 16px;
+            align-items: center; justify-content: center;
+            background: #000 url('https://i.postimg.cc/vTkgB38y/2226.png') center center / cover no-repeat;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #fff;
         }
-        #homeScreen.show { display: block; animation: popFade .25s ease-out; }
+        #homeScreen.show { display: flex; animation: popFade .25s ease-out; }
         @keyframes popFade { from { opacity: 0; } to { opacity: 1; } }
-        .home-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-        .home-top h1 { margin: 0; font-size: 22px; }
-        .home-top .refresh-btn { margin: 0; font-size: 24px; }
-        .home-legend { display: flex; gap: 18px; font-size: 13px; color: #ddd; margin-bottom: 20px; }
-        .home-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-inline-end: 6px; }
-        .home-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
-        .home-card {
-            display: flex; flex-direction: column; align-items: center; gap: 10px;
-            padding: 16px 10px; background: rgba(30,30,30,.75); backdrop-filter: blur(6px);
-            border: 1px solid #444; border-radius: 12px; cursor: pointer; text-align: center;
-            font-size: 14px; font-weight: bold; transition: .2s;
+
+        .glass-box {
+            position: relative; width: min(720px, 100%); max-height: 100%; overflow-y: auto;
+            box-sizing: border-box; padding: 22px 22px 18px;
+            background: rgba(255, 255, 255, 0.12);
+            -webkit-backdrop-filter: blur(16px) saturate(140%); backdrop-filter: blur(16px) saturate(140%);
+            border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 20px;
+            box-shadow: 0 8px 40px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.25);
         }
-        .home-card:hover { background: rgba(60,60,60,.85); transform: translateY(-2px); }
+        .home-top { text-align: center; margin-bottom: 16px; padding: 0 36px; }
+        .home-top h1 { margin: 0; font-size: 20px; }
+        .home-top .refresh-btn { position: absolute; top: 14px; right: 16px; margin: 0; font-size: 22px; }
+
+        .home-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .home-card {
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            padding: 12px 6px; background: rgba(0,0,0,.35);
+            border: 1px solid rgba(255,255,255,.2); border-radius: 12px; cursor: pointer; text-align: center;
+            font-size: 13px; font-weight: bold; transition: .2s; min-width: 0; word-break: break-word;
+        }
+        .home-card:hover { background: rgba(0,0,0,.5); transform: translateY(-2px); }
         .home-card img {
-            width: 72px; height: 44px; object-fit: contain; box-sizing: border-box; padding: 3px;
+            width: 64px; height: 40px; object-fit: contain; box-sizing: border-box; padding: 3px;
             border: 2px solid #777; border-radius: 6px; transition: .3s;
         }
         .home-card img.st-wait { border-color: #f5c518; animation: stPulse 1s infinite; }
@@ -153,14 +161,24 @@
         .home-card img.st-bad  { border-color: #ff3b3b; box-shadow: 0 0 8px #ff3b3b; }
         .home-card img.st-unk  { border-color: #999; }
 
-        /* زرار الشاشة الرئيسية في قائمة القنوات */
-        .home-menu-btn {
-            display: flex; align-items: center; gap: 15px; padding: 10px 15px;
-            background: #2b2b2b; border: 1px solid #555; border-radius: 8px; cursor: pointer; color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 15px; font-weight: bold; transition: .2s;
+        .home-legend { display: flex; justify-content: center; gap: 18px; font-size: 13px; color: #eee; margin-top: 16px; }
+        .home-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-inline-end: 6px; }
+
+        @media (max-width: 480px) {
+            .glass-box { padding: 18px 12px 14px; }
+            .home-grid { gap: 8px; }
+            .home-card { font-size: 11px; padding: 10px 4px; }
+            .home-card img { width: 52px; height: 32px; }
+            .home-legend { gap: 10px; font-size: 11px; }
         }
-        .home-menu-btn:hover { background: #3a3a3a; }
-        .home-menu-btn svg { width: 40px; height: 24px; flex-shrink: 0; }
+
+        /* هيدر قائمة القنوات: الشاشة الرئيسية + ريفريش */
+        .menu-head-group { display: flex; align-items: center; gap: 14px; }
+        .menu-head-group .refresh-btn { margin: 0; }
+        .home-menu-btn { display: flex; align-items: center; gap: 10px; cursor: pointer; color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 15px; font-weight: bold; transition: .2s; }
+        .home-menu-btn:hover { opacity: .8; }
+        .home-menu-btn svg { width: 26px; height: 26px; flex-shrink: 0; }
     </style>
     
     <script src="https://content.jwplatform.com/libraries/SAHhwvZq.js"></script>
@@ -599,20 +617,27 @@
             const menuEl = document.getElementById('customChannelMenu');
             const header = menuEl ? menuEl.querySelector('.channel-menu-header') : null;
             if (header) {
-                // زرار إعادة الفحص
-                const b = document.createElement('span');
-                b.className = 'refresh-btn';
-                b.title = 'إعادة فحص';
-                b.textContent = '↻';
-                b.onclick = runChecks;
-                header.insertBefore(b, header.querySelector('.close-btn'));
+                // نشيل عنوان "باقة القنوات" ونحط مكانه: أيقونة الديسكتوب + الشاشة الرئيسية + ريفريش
+                const h3 = header.querySelector('h3');
+                if (h3) h3.remove();
 
-                // زرار الشاشة الرئيسية
+                const group = document.createElement('div');
+                group.className = 'menu-head-group';
+
                 const hb = document.createElement('div');
                 hb.className = 'home-menu-btn';
-                hb.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span>الشاشة الرئيسية</span>';
+                hb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span>الشاشة الرئيسية</span>';
                 hb.onclick = showHome;
-                header.insertAdjacentElement('afterend', hb);
+
+                const rb = document.createElement('span');
+                rb.className = 'refresh-btn';
+                rb.title = 'إعادة فحص';
+                rb.textContent = '↻';
+                rb.onclick = runChecks;
+
+                group.appendChild(hb);
+                group.appendChild(rb);
+                header.insertBefore(group, header.firstChild);
             }
 
             // بناء الشاشة الرئيسية من نفس عناصر القائمة (نفس الأيقونات والأسماء)
@@ -621,12 +646,14 @@
             home.id = 'homeScreen';
             home.setAttribute('dir', 'rtl');
             home.innerHTML =
+                '<div class="glass-box">' +
                 '<div class="home-top"><h1>On Sport &amp; Kora Plus</h1><span class="refresh-btn" title="إعادة فحص">↻</span></div>' +
+                '<div class="home-grid"></div>' +
                 '<div class="home-legend">' +
                 '<span><i style="background:#1dcf60"></i>بث شغال</span>' +
                 '<span><i style="background:#ff3b3b"></i>متوقف</span>' +
                 '<span><i style="background:#999"></i>غير معروف</span>' +
-                '</div><div class="home-grid"></div>';
+                '</div></div>';
             home.querySelector('.refresh-btn').onclick = runChecks;
             const grid = home.querySelector('.home-grid');
             items.forEach((it, i) => {
@@ -648,7 +675,8 @@
             runChecks();
         });
 
-        // تحديث تلقائي كل دقيقة ونص والقائمة أو الشاشة الرئيسية ظاهرة
+        
+// تحديث تلقائي كل دقيقة ونص والقائمة أو الشاشة الرئيسية ظاهرة
         setInterval(() => {
             const menu = document.getElementById('customChannelMenu');
             const home = document.getElementById('homeScreen');
