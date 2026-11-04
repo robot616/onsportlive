@@ -126,7 +126,7 @@
             display: none; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
             z-index: 90000; overflow: hidden; box-sizing: border-box; padding: 16px;
             align-items: center; justify-content: center;
-            background: #000 url('https://i.postimg.cc/qqFhq0X8/Gemini-Generated-Image-nben5fnben5fnben.jpg') center center / cover no-repeat;
+            background: #000 url('https://i.postimg.cc/qqFhq0X8/Gemini-Generated-Image-nben5fnben5fnben.jpg') center center / 100% 100% no-repeat;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #fff;
         }
         #homeScreen.show { display: flex; animation: popFade .25s ease-out; }
@@ -393,7 +393,7 @@
                 <div id="customChannelMenu" class="channel-menu" dir="rtl">
                     <div class="channel-menu-header">
                         <h3>باقة القنوات</h3>
-                        <span class="close-btn" onclick="toggleMenu()">&times;</span>
+                        <span class="close-btn" onclick="toggleMenu()">×</span>
                     </div>
                     <div class="channel-menu-item active-item" onclick="changeChannel(0)">
                         <img src="${onSportLogo}" alt="Icon">
@@ -649,7 +649,7 @@
             home.setAttribute('dir', 'rtl');
             home.innerHTML =
                 '<div class="glass-box">' +
-                '<div class="home-top"><h1>On Sport &amp; Kora Plus</h1><span class="refresh-btn" title="إعادة فحص">↻</span></div>' +
+                '<div class="home-top"><h1>On Sport & Kora Plus</h1><span class="refresh-btn" title="إعادة فحص">↻</span></div>' +
                 '<div class="home-grid"></div>' +
                 '<div class="home-legend">' +
                 '<span><i style="background:#1dcf60"></i>بث شغال</span>' +
