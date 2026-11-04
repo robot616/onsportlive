@@ -61,6 +61,15 @@
             padding: 2px; object-fit: contain; box-sizing: border-box;
         }
 
+        /* مربع حالة القناة حول الأيقونة */
+        .channel-menu-item img { border: 2px solid #777; border-radius: 5px; transition: .3s; }
+        .channel-menu-item img.st-wait { border-color: #f5c518; animation: stPulse 1s infinite; }
+        .channel-menu-item img.st-ok   { border-color: #1dcf60; box-shadow: 0 0 6px #1dcf60; }
+        .channel-menu-item img.st-bad  { border-color: #ff3b3b; box-shadow: 0 0 6px #ff3b3b; }
+        .channel-menu-item img.st-unk  { border-color: #999; }
+        @keyframes stPulse { 50% { opacity: .4; } }
+        .refresh-btn { cursor: pointer; color: #fff; font-size: 20px; margin-inline-start: auto; margin-inline-end: 14px; }
+
         /* إخفاء زر الجودة الأصلي فقط عند استخدام الجودات اليدوية */
         #player.manual-quality .jw-icon-hd,
         #player.manual-quality .jw-icon-settings {
@@ -406,6 +415,99 @@
             updateQualityButtons(e.index);
             requestAnimationFrame(() => updateQualityButtons(e.index));
         });
+
+        /* ===== فحص حالة القنوات ===== */
+        const CHECK_TIMEOUT = 8000;
+        let lastCheck = 0, checking = false;
+
+        function fetchT(url) {
+            const c = new AbortController();
+            const t = setTimeout(() => c.abort(), CHECK_TIMEOUT);
+            return fetch(url, { signal: c.signal, cache: 'no-store' }).finally(() => clearTimeout(t));
+        }
+
+        // يرجع: 'ok' شغال | 'bad' واقف | 'unk' مش معروف (غالباً CORS أو الرابط ميت)
+        async function checkUrl(url) {
+            try {
+                let r = await fetchT(url);
+                if (!r.ok) return 'bad';
+                let txt = await r.text();
+                if (!txt.includes('#EXTM3U')) return 'bad';
+                let base = r.url || url;
+
+                // لو playlist رئيسي، ندخل على أول playlist فرعي
+                if (txt.includes('#EXT-X-STREAM-INF')) {
+                    const lines = txt.split('\n').map(s => s.trim());
+                    const i = lines.findIndex(l => l.startsWith('#EXT-X-STREAM-INF'));
+                    const sub = lines.slice(i + 1).find(l => l && !l.startsWith('#'));
+                    if (!sub) return 'bad';
+                    base = new URL(sub, base).href;
+                    r = await fetchT(base);
+                    if (!r.ok) return 'bad';
+                    txt = await r.text();
+                }
+
+                const segs = txt.split('\n').map(s => s.trim()).filter(l => l && !l.startsWith('#'));
+                if (!segs.length) return 'bad';
+
+                // نجرب آخر segment: لو بيرد يبقى البث فعلاً شغال
+                const sr = await fetchT(new URL(segs[segs.length - 1], base).href);
+                const ok = sr.ok;
+                if (sr.body) sr.body.cancel();
+                return ok ? 'ok' : 'bad';
+            } catch (e) {
+                return e.name === 'AbortError' ? 'bad' : 'unk';
+            }
+        }
+
+        async function checkChannel(i) {
+            const q = window.customQualities[i];
+            const urls = q ? q.filter(x => x.url).map(x => x.url) : [playerInstance.getPlaylist()[i].file];
+            const res = await Promise.all(urls.map(checkUrl));
+            if (res.includes('ok')) return 'ok';
+            if (res.includes('unk')) return 'unk';
+            return 'bad';
+        }
+
+        async function runChecks() {
+            if (checking) return;
+            checking = true;
+            const imgs = document.querySelectorAll('#customChannelMenu .channel-menu-item img');
+            imgs.forEach(img => img.className = 'st-wait');
+            await Promise.all(Array.from(imgs).map(async (img, i) => {
+                const s = await checkChannel(i);
+                img.className = 'st-' + s;
+            }));
+            lastCheck = Date.now();
+            checking = false;
+        }
+
+        // نفحص لما القائمة تتفتح (بحد أدنى 30 ثانية بين كل فحص)
+        const _origToggleMenu = toggleMenu;
+        toggleMenu = function () {
+            _origToggleMenu();
+            const menu = document.getElementById('customChannelMenu');
+            if (menu && menu.classList.contains('active') && Date.now() - lastCheck > 30000) runChecks();
+        };
+
+        playerInstance.on('ready', function () {
+            const header = document.querySelector('#customChannelMenu .channel-menu-header');
+            if (header) {
+                const b = document.createElement('span');
+                b.className = 'refresh-btn';
+                b.title = 'إعادة فحص';
+                b.textContent = '↻';
+                b.onclick = runChecks;
+                header.insertBefore(b, header.querySelector('.close-btn'));
+            }
+            runChecks();
+        });
+
+        // تحديث تلقائي كل دقيقة ونص والقائمة مفتوحة
+        setInterval(() => {
+            const menu = document.getElementById('customChannelMenu');
+            if (menu && menu.classList.contains('active')) runChecks();
+        }, 90000);
     </script>
 </body>
 </html>
